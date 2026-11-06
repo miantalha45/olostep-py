@@ -183,24 +183,24 @@ class OlostepServerError_AuthFailed(OlostepServerError_BaseError):
 
     Maps to a HTTP 402 (Payment Required) status code.
 
-    If supplied, the message reveals only half of the key (rounded down) and masks the rest.
+    If supplied, the message reveals only the last 4 characters of the key, so error
+    messages and logs never carry a usable part of it.
     """
 
     msg_template = "The API rejected your API Key {masked}as invalid"
 
-    def _mask_key_half(self, key: str) -> str:
+    def _mask_key(self, key: str | None) -> str:
         if not key:
             return ""
-        half = len(key) // 2
-        if half <= 0:
-            return "*****"
-        return f"[{key[:half]}*****] "
+        if len(key) < 12:
+            return "[*****] "
+        return f"[*****{key[-4:]}] "
 
     def __init__(
         self,
         api_key: str | None = None,
     ) -> None:
-        masked = self._mask_key_half(api_key)
+        masked = self._mask_key(api_key)
         message = self.msg_template.format(masked=masked)
         super().__init__(message)
 

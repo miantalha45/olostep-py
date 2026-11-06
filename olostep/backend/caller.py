@@ -103,7 +103,11 @@ class EndpointCaller:
             )
 
         if response.status_code == 401:
-            if parsed_body and parsed_body.get("invalid_api_key") is True:
+            # Older endpoints send {"invalid_api_key": true}; newer ones send {"code": "invalid_api_key"}.
+            if parsed_body and (
+                parsed_body.get("invalid_api_key") is True
+                or parsed_body.get("code") == "invalid_api_key"
+            ):
                 raise OlostepServerError_AuthFailed(api_key=self._api_key)
             raise OlostepServerError_BlacklistedDomain()
 
