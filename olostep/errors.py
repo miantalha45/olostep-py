@@ -220,7 +220,8 @@ class OlostepServerError_CreditsExhausted(OlostepServerError_BaseError):
 class OlostepServerError_InvalidEndpointCalled(OlostepServerError_BaseError):
     """Raised when an invalid Method + Endpoint is requested.
 
-    Maps to a HTTP 403 (Forbidden) status code with a very misleading message of
+    Maps to a HTTP 404 with the title "route not found". Older API versions sent a
+    HTTP 403 (Forbidden) status code with a very misleading message of
     'Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): [...]'
     and a X-Amzn-ErrorType header of 'IncompleteSignatureException'
 
