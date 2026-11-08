@@ -4,7 +4,7 @@ import json
 from enum import Enum
 from typing import Any
 
-from pydantic import field_validator, model_validator
+from pydantic import AliasChoices, Field, field_validator, model_validator
 
 # =============================================================================
 # RESPONSE MODELS
@@ -139,8 +139,13 @@ class BatchCreateResponse(OlostepResponseBaseModel):
     total_urls: int
     number_retried: int | None = None
     completed_urls: int
-    batch_parser: str | None = None  # Make optional since API might not return it
-    batch_country: Country | None = None  # Make optional since API might not return it
+    # The API sends "parser" and "country"; "batch_parser" and "batch_country" are still accepted.
+    batch_parser: str | None = Field(
+        default=None, validation_alias=AliasChoices("parser", "batch_parser")
+    )
+    batch_country: Country | None = Field(
+        default=None, validation_alias=AliasChoices("country", "batch_country")
+    )
     start_date: str
 
     @field_validator("batch_parser", mode="after")

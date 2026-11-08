@@ -142,6 +142,14 @@ class EndpointCaller:
                 raise OlostepServerError_FeatureApprovalRequired()
 
         if response.status_code == 404:
+            # Unknown method/path. The API used to answer with an AWS 403 (handled above);
+            # it now sends a 404 titled "route not found" instead of e.g. "batch not found".
+            if parsed_body and parsed_body.get("title") == "route not found":
+                raise OlostepServerError_InvalidEndpointCalled(
+                    request.url,
+                    request.method,
+                    {"body": response.body, "headers": response.headers},
+                )
             # special case: not enough scraping resources available for a given (usually specific) request.
             if parsed_body and (
                 parsed_body.get("malformed_request") is False

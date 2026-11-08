@@ -310,7 +310,11 @@ class Parser(OlostepBaseModel):
 
 
 class LLMExtract(OlostepBaseModel):
-    """LLM extraction configuration."""
+    """LLM extraction configuration.
+
+    `schema` must be a JSON Schema object at the top level, e.g.
+    {"type": "object", "properties": {"title": {"type": "string"}}}.
+    """
 
     schema: dict[str, Any]
 
